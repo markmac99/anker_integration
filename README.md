@@ -1,6 +1,6 @@
-# README for anker_mqtt
+# README for anker_integration
 
-This folder contains configuration and other files for running the anker-mqtt gateway.
+This folder contains configuration and other files for running the anker-mqtt gateway to capture data from your Solarbank E5000 to an MQTT broker.
 
 ## Setup
 
