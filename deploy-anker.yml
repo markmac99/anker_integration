@@ -1,0 +1,37 @@
+- hosts: ohserver
+  vars_files: 
+    - /mnt/c/Users/{{ lookup('env','USER' )}}/apikeys/mqvariables.enc
+  vars:
+    srcdir: "/mnt/c/Users/{{ lookup('env','USER' )}}/OneDrive/dev/tackley/anker_integration"
+  tasks:
+  - name: import variables 
+    include_vars: local-vars.yml
+  - name: Copy files
+    copy: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }}
+    with_items:
+    - {src: '{{srcdir}}/.env', dest: '{{destdir}}/', mode: '644', backup: yes }
+    - {src: '{{srcdir}}/getdata.sh', dest: '{{destdir}}/', mode: '754', backup: yes }
+    - {src: '{{srcdir}}/ankermq.service', dest: '{{destdir}}/', mode: '644', backup: yes }
+    - {src: '{{srcdir}}/installService.sh', dest: '{{destdir}}/', mode: '754', backup: yes }
+
+  - name: set ANKER host
+    ansible.builtin.replace:
+      path: '{{destdir}}/.env'
+      regexp: 'ANKERIP'
+      replace: '{{ ankerip }}'
+  - name: update broker
+    ansible.builtin.replace:
+      path: '{{destdir}}/.env'
+      regexp: "MQHOST"
+      replace: "metsatpi"
+  - name: update mqpasswd
+    ansible.builtin.replace:
+      path: '{{destdir}}/.env'
+      regexp: "MQANKERPASS"
+      replace: "{{ mqankerpassword }}"
+
+
+#  - name: Check requirements
+#    shell: . ~/.bashrc && conda activate $HOME/miniconda3/envs/openhabstuff && pip install -r {{destdir}}/requirements.txt
+#    args:
+#      executable: /bin/bash  
